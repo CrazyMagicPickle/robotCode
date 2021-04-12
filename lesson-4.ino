@@ -17,11 +17,12 @@ bool stopFlag = true;
 bool JogFlag = false;
 uint16_t JogTimeCnt = 0;
 uint32_t JogTime=0;
+unsigned int barIter = 0;
 enum DS
 {
   MANUAL_DRIVE,
   AUTO_DRIVE_LF, //line follow
-}Drive_Status=MANUAL_DRIVE;
+}Drive_Status=AUTO_DRIVE_LF;
 
 enum DN
 { 
@@ -99,53 +100,20 @@ void auto_tarcking(){
     go_ahead(0);
   }
   else if((sensor[0]==HIGH)&&(sensor[1]==HIGH)){//The left an right sensor are on the black line.
-    go_stop();
+    set_motorspeed(M_SPEED2,M_SPEED2);
+    barIter++;
+    go_ahead(0);
+    switch (barIter) {
+      case 0: 
+        go_ahead(0);
+        break;
+      default:
+        error
+        break;
+    }
   }
  }
  //WiFi / Bluetooth through the serial control
-void do_Uart_Tick()
-{
-
-  char Uart_Date=0;
-  if(Serial.available()) 
-  {
-    size_t len = Serial.available();
-    uint8_t sbuf[len + 1];
-    sbuf[len] = 0x00;
-    Serial.readBytes(sbuf, len);
-    //parseUartPackage((char*)sbuf);
-    memcpy(buffUART + buffUARTIndex, sbuf, len);//ensure that the serial port can read the entire frame of data
-    buffUARTIndex += len;
-    preUARTTick = millis();
-    if(buffUARTIndex >= MAX_PACKETSIZE - 1) 
-    {
-      buffUARTIndex = MAX_PACKETSIZE - 2;
-      preUARTTick = preUARTTick - 200;
-    }
-  }
-  if(buffUARTIndex > 0 && (millis() - preUARTTick >= 100))//APP send flag to modify the obstacle avoidance parameters
-  { //data ready
-    buffUART[buffUARTIndex] = 0x00;
-    Uart_Date=buffUART[0];
-    buffUARTIndex = 0;
-  }
-  switch (Uart_Date)    //serial control instructions
-  {
-    case '2':
-            Drive_Status=MANUAL_DRIVE; Drive_Num=GO_ADVANCE;Serial.println("forward"); break;
-    case '4':
-            Drive_Status=MANUAL_DRIVE; Drive_Num=GO_LEFT; Serial.println("turn left");break;
-    case '6':
-            Drive_Status=MANUAL_DRIVE; Drive_Num=GO_RIGHT; Serial.println("turn right");break;
-    case '8':
-            Drive_Status=MANUAL_DRIVE; Drive_Num=GO_BACK; Serial.println("go back");break;
-    case '5':
-            Drive_Status=MANUAL_DRIVE; Drive_Num=STOP_STOP;Serial.println("stop");break;
-    case '1':
-          Drive_Status=AUTO_DRIVE_LF; Serial.println("line follow...");break;
-    default:break;
-  }
-}
 
 //robot motor control
 void do_Drive_Tick()
@@ -231,6 +199,5 @@ void setup() {
 }
 
 void loop() {
-  do_Uart_Tick();
   do_Drive_Tick();
 }
