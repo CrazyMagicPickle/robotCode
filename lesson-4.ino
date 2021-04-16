@@ -107,6 +107,9 @@ void auto_tarcking(){
       case 0: 
         go_ahead(0);
         break;
+      case 1:
+        turn_left(20);
+        break;
       default:
         error
         break;
