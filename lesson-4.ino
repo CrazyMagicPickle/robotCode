@@ -91,7 +91,7 @@ void auto_tarcking(){
     set_motorspeed(M_SPEED1,M_SPEED1);
     turn_right(20);
   }
-  else if((sensor[0]==HIGH)&&(sensor[1]==LOW)){//The right sensor is on the white line.The left sensor is on the black line
+else if((sensor[0]==HIGH)&&(sensor[1]==LOW)){//The right sensor is on the white line.The left sensor is on the black line
     set_motorspeed(M_SPEED1,M_SPEED1);
     turn_left(20);
   }
@@ -102,18 +102,21 @@ void auto_tarcking(){
   else if((sensor[0]==HIGH)&&(sensor[1]==HIGH)){//The left an right sensor are on the black line.
     set_motorspeed(M_SPEED2,M_SPEED2);
     barIter++;
-    go_ahead(0);
+    Serial.println(barIter);
     switch (barIter) {
-      case 0: 
-        go_ahead(0);
-        break;
       case 1:
-        turn_left(20);
+        go_ahead(300);
         break;
+      case 2:
+        go_back(300);
+        break;
+      case 3:
+        go_ahead(300);
       default:
-        error
         break;
     }
+    go_stop();
+    delay(500);
   }
  }
  //WiFi / Bluetooth through the serial control
