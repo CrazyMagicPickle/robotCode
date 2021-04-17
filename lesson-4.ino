@@ -120,7 +120,10 @@ else if((sensor[0]==HIGH)&&(sensor[1]==LOW)){//The right sensor is on the white 
   }
  }
  //WiFi / Bluetooth through the serial control
-
+void do_Uart_Tick() {
+  if(Serial.available()) {
+  }
+}
 //robot motor control
 void do_Drive_Tick()
 {
@@ -206,4 +209,5 @@ void setup() {
 
 void loop() {
   do_Drive_Tick();
+  do_Uart_Tick();
 }
